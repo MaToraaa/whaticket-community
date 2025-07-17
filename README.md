@@ -1,10 +1,3 @@
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?business=VWW3BHW4AWHUY&item_name=Desenvolvimento+de+Software&currency_code=BRL)
-[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B21084%2Fgithub.com%2Fcanove%2Fwhaticket.svg?type=shield)](https://app.fossa.com/projects/custom%2B21084%2Fgithub.com%2Fcanove%2Fwhaticket?ref=badge_shield)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=canove_whaticket&metric=alert_status)](https://sonarcloud.io/dashboard?id=canove_whaticket)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=canove_whaticket&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=canove_whaticket)
-[![Discord Chat](https://img.shields.io/discord/784109818247774249.svg?logo=discord)](https://discord.gg/Dp2tTZRYHg)
-[![Forum](https://img.shields.io/badge/forum-online-blue.svg?logo=discourse)](https://whaticket.online/)
-
 # WhaTicket!
 
 **NOTE**: The new version of whatsapp-web.js required Node 14. Upgrade your installations to keep using it.
@@ -25,6 +18,14 @@ Subsequent messages from same contact will be related to first **open/pending** 
 
 If a contact sent a new message in less than 2 hours interval, and there is no ticket from this contact with **pending/open** status, the newest **closed** ticket will be reopen, instead of creating a new one.
 
+## How to use it?
+
+- Go to http://your_server_ip:3000/signup
+- Create an user and login with it.
+- On the sidebard, go to _Connections_ page and create your first WhatsApp connection.
+- Wait for QR CODE button to appear, click it and read qr code.
+- Done. Every message received by your synced WhatsApp number will appear in Tickets List.
+
 ## Screenshots
 
 ![](https://github.com/canove/whaticket/raw/master/images/whaticket-queues.gif)
@@ -39,440 +40,551 @@ If a contact sent a new message in less than 2 hours interval, and there is no t
 - Send media (images/audio/documents) ✅
 - Receive media (images/audio/video/documents) ✅
 
-## Installation and Usage (Linux Ubuntu - Development)
+# Installation Section :
 
-Create Mysql Database using docker:
-_Note_: change MYSQL_DATABASE, MYSQL_PASSWORD, MYSQL_USER and MYSQL_ROOT_PASSWORD.
+- [Installation using Linux for Development](#installation-linux-ubuntu---development)
+- [Installation Basic Production Deployment](#basic-production-deployment)
+- [Using Docker and Docker Compose](#using-docker-and-docker-compose)
 
-```bash
-docker run --name whaticketdb -e MYSQL_ROOT_PASSWORD=strongpassword -e MYSQL_DATABASE=whaticket -e MYSQL_USER=whaticket -e MYSQL_PASSWORD=whaticket --restart always -p 3306:3306 -d mariadb:latest --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+## Installation (Linux Ubuntu - Development)
 
-# Or run using `docker-compose` as below
-# Before copy .env.example to .env first and set the variables in the file.
-docker-compose up -d mysql
+  Create Mysql Database using docker:
+  _Note_: change MYSQL_DATABASE, MYSQL_PASSWORD, MYSQL_USER and MYSQL_ROOT_PASSWORD.
 
-# To administer this mysql database easily using phpmyadmin. 
-# It will run by default on port 9000, but can be changed in .env using `PMA_PORT`
-docker-compose -f docker-compose.phpmyadmin.yaml up -d
-```
+  ```bash
+  docker run --name whaticketdb -e MYSQL_ROOT_PASSWORD=strongpassword -e MYSQL_DATABASE=whaticket -e MYSQL_USER=whaticket -e MYSQL_PASSWORD=whaticket --restart always -p 3306:3306 -d mariadb:latest --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
 
-Install puppeteer dependencies:
+  # Or run using `docker-compose` as below
+  # Before copy .env.example to .env first and set the variables in the file.
+  docker-compose up -d mysql
 
-```bash
-sudo apt-get install -y libxshmfence-dev libgbm-dev wget unzip fontconfig locales gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils
-```
+  # To administer this mysql database easily using phpmyadmin.
+  # It will run by default on port 9000, but can be changed in .env using `PMA_PORT`
+  docker-compose -f docker-compose.phpmyadmin.yaml up -d
+  ```
 
-Clone this repo
+  Install puppeteer dependencies:
 
-```bash
-git clone https://github.com/canove/whaticket/ whaticket
-```
+  ```bash
+  sudo apt-get install -y libxshmfence-dev libgbm-dev wget unzip fontconfig locales gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils
+  ```
 
-Go to backend folder and create .env file:
+  Clone this repo
 
-```bash
-cp .env.example .env
-nano .env
-```
+  ```bash
+  git clone https://github.com/canove/whaticket/ whaticket
+  ```
 
-Fill `.env` file with environment variables:
+  Go to backend folder and create .env file:
 
-```bash
-NODE_ENV=DEVELOPMENT      #it helps on debugging
-BACKEND_URL=http://localhost
-FRONTEND_URL=https://localhost:3000
-PROXY_PORT=8080
-PORT=8080
+  ```bash
+  cp .env.example .env
+  nano .env
+  ```
 
-DB_HOST=                  #DB host IP, usually localhost
-DB_DIALECT=
-DB_USER=
-DB_PASS=
-DB_NAME=
+  Fill `.env` file with environment variables:
 
-JWT_SECRET=3123123213123
-JWT_REFRESH_SECRET=75756756756
-```
+  ```bash
+  NODE_ENV=DEVELOPMENT      #it helps on debugging
+  BACKEND_URL=http://localhost
+  FRONTEND_URL=https://localhost:3000
+  PROXY_PORT=8080
+  PORT=8080
 
-Install backend dependencies, build app, run migrations and seeds:
+  DB_HOST=                  #DB host IP, usually localhost
+  DB_DIALECT=
+  DB_USER=
+  DB_PASS=
+  DB_NAME=
 
-```bash
-npm install
-npm run build
-npx sequelize db:migrate
-npx sequelize db:seed:all
-```
+  JWT_SECRET=3123123213123
+  JWT_REFRESH_SECRET=75756756756
+  ```
 
-Start backend:
+  Install backend dependencies, build app, run migrations and seeds:
 
-```bash
-npm start
-```
+  ```bash
+  npm install
+  npm run build
+  npx sequelize db:migrate
+  npx sequelize db:seed:all
+  ```
 
-Open a second terminal, go to frontend folder and create .env file:
+  Start backend:
 
-```bash
-nano .env
-REACT_APP_BACKEND_URL = http://localhost:8080/ # Your previous configured backend app URL.
-```
+  ```bash
+  npm start
+  ```
 
-Start frontend app:
+  Open a second terminal, go to frontend folder and create .env file:
 
-```bash
-npm start
-```
+  ```bash
+  nano .env
+  REACT_APP_BACKEND_URL = http://localhost:8080/ # Your previous configured backend app URL.
+  ```
 
-- Go to http://your_server_ip:3000/signup
-- Create an user and login with it.
-- On the sidebard, go to _Connections_ page and create your first WhatsApp connection.
-- Wait for QR CODE button to appear, click it and read qr code.
-- Done. Every message received by your synced WhatsApp number will appear in Tickets List.
+  Start frontend app:
+
+  ```bash
+  npm start
+  ```
 
 ## Basic production deployment
 
-### Using Ubuntu 20.04 VPS
+  ### Using Ubuntu 20.04 VPS
 
-All instructions below assumes you are NOT running as root, since it will give an error in puppeteer. So let's start creating a new user and granting sudo privileges to it:
+  All instructions below assumes you are NOT running as root, since it will give an error in puppeteer. So let's start creating a new user and granting sudo privileges to it:
 
-```bash
-adduser deploy
-usermod -aG sudo deploy
+  ```bash
+  adduser deploy
+  usermod -aG sudo deploy
+  ```
+
+  Now we can login with this new user:
+
+  ```bash
+  su deploy
+  ```
+
+  You'll need two subdomains forwarding to yours VPS ip to follow these instructions. We'll use `myapp.mydomain.com` to frontend and `api.mydomain.com` to backend in the following example.
+
+  Update all system packages:
+
+  ```bash
+  sudo apt update && sudo apt upgrade
+  ```
+
+  Install node, and confirm node command is available:
+
+  ```bash
+  curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  node -v
+  npm -v
+  ```
+
+  Install docker and add you user to docker group:
+
+  ```bash
+  sudo apt install apt-transport-https ca-certificates curl software-properties-common
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+  sudo apt update
+  sudo apt install docker-ce
+  sudo systemctl status docker
+  sudo usermod -aG docker ${USER}
+  su - ${USER}
+  ```
+
+  Create Mysql Database using docker:
+  _Note_: change MYSQL_DATABASE, MYSQL_PASSWORD, MYSQL_USER and MYSQL_ROOT_PASSWORD.
+
+  ```bash
+  docker run --name whaticketdb -e MYSQL_ROOT_PASSWORD=strongpassword -e MYSQL_DATABASE=whaticket -e MYSQL_USER=whaticket -e MYSQL_PASSWORD=whaticket --restart always -p 3306:3306 -d mariadb:latest --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+
+  # Or run using `docker-compose` as below
+  # Before copy .env.example to .env first and set the variables in the file.
+  docker-compose up -d mysql
+
+  # To administer this mysql database easily using phpmyadmin.
+  # It will run by default on port 9000, but can be changed in .env using `PMA_PORT`
+  docker-compose -f docker-compose.phpmyadmin.yaml up -d
+  ```
+
+  Clone this repository:
+
+  ```bash
+  cd ~
+  git clone https://github.com/canove/whaticket whaticket
+  ```
+
+  Create backend .env file and fill with details:
+
+  ```bash
+  cp whaticket/backend/.env.example whaticket/backend/.env
+  nano whaticket/backend/.env
+  ```
+
+  ```bash
+  NODE_ENV=
+  BACKEND_URL=https://api.mydomain.com      #USE HTTPS HERE, WE WILL ADD SSL LATTER
+  FRONTEND_URL=https://myapp.mydomain.com   #USE HTTPS HERE, WE WILL ADD SSL LATTER, CORS RELATED!
+  PROXY_PORT=443                            #USE NGINX REVERSE PROXY PORT HERE, WE WILL CONFIGURE IT LATTER
+  PORT=8080
+
+  DB_HOST=localhost
+  DB_DIALECT=
+  DB_USER=
+  DB_PASS=
+  DB_NAME=
+
+  JWT_SECRET=3123123213123
+  JWT_REFRESH_SECRET=75756756756
+  ```
+
+  Install puppeteer dependencies:
+
+  ```bash
+  sudo apt-get install -y libxshmfence-dev libgbm-dev wget unzip fontconfig locales gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils
+  ```
+
+  Install backend dependencies, build app, run migrations and seeds:
+
+  ```bash
+  cd whaticket/backend
+  npm install
+  npm run build
+  npx sequelize db:migrate
+  npx sequelize db:seed:all
+  ```
+
+  Start it with `npm start`, you should see: `Server started on port...` on console. Hit `CTRL + C` to exit.
+
+  Install pm2 **with sudo**, and start backend with it:
+
+  ```bash
+  sudo npm install -g pm2
+  pm2 start dist/server.js --name whaticket-backend
+  ```
+
+  Make pm2 auto start after reboot:
+
+  ```bash
+  pm2 startup ubuntu -u `YOUR_USERNAME`
+  ```
+
+  Copy the last line outputed from previus command and run it, its something like:
+
+  ```bash
+  sudo env PATH=\$PATH:/usr/bin pm2 startup ubuntu -u YOUR_USERNAME --hp /home/YOUR_USERNAM
+  ```
+
+  Go to frontend folder and install dependencies:
+
+  ```bash
+  cd ../frontend
+  npm install
+  ```
+
+  Create frontend .env file and fill it ONLY with your backend address, it should look like this:
+
+  ```bash
+  REACT_APP_BACKEND_URL = https://api.mydomain.com/
+  ```
+
+  Build frontend app:
+
+  ```bash
+  npm run build
+  ```
+
+  Start frontend with pm2, and save pm2 process list to start automatically after reboot:
+
+  ```bash
+  pm2 start server.js --name whaticket-frontend
+  pm2 save
+  ```
+
+  To check if it's running, run `pm2 list`, it should look like:
+
+  ```bash
+  deploy@ubuntu-whats:~$ pm2 list
+  ┌─────┬─────────────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+  │ id  │ name                    │ namespace   │ version │ mode    │ pid      │ uptime │ .    │ status    │ cpu      │ mem      │ user     │ watching │
+  ├─────┼─────────────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+  │ 1   │ whaticket-frontend      │ default     │ 0.1.0   │ fork    │ 179249   │ 12D    │ 0    │ online    │ 0.3%     │ 50.2mb   │ deploy   │ disabled │
+  │ 6   │ whaticket-backend       │ default     │ 1.0.0   │ fork    │ 179253   │ 12D    │ 15   │ online    │ 0.3%     │ 118.5mb  │ deploy   │ disabled │
+  └─────┴─────────────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+  ```
+
+  Install nginx:
+
+  ```bash
+  sudo apt install nginx
+  ```
+
+  Remove nginx default site:
+
+  ```bash
+  sudo rm /etc/nginx/sites-enabled/default
+  ```
+
+  Create a new nginx site to frontend app:
+
+  ```bash
+  sudo nano /etc/nginx/sites-available/whaticket-frontend
+  ```
+
+  Edit and fill it with this information, changing `server_name` to yours equivalent to `myapp.mydomain.com`:
+
+  ```bash
+  server {
+    server_name myapp.mydomain.com;
+
+    location / {
+      proxy_pass http://127.0.0.1:3333;
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection 'upgrade';
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_cache_bypass $http_upgrade;
+    }
+  }
+  ```
+
+  Create another one to backend api, changing `server_name` to yours equivalent to `api.mydomain.com`, and `proxy_pass` to your localhost backend node server URL:
+
+  ```bash
+  sudo cp /etc/nginx/sites-available/whaticket-frontend /etc/nginx/sites-available/whaticket-backend
+  sudo nano /etc/nginx/sites-available/whaticket-backend
+  ```
+
+  ```bash
+  server {
+    server_name api.mydomain.com;
+
+    location / {
+      proxy_pass http://127.0.0.1:8080;
+      ......
+  }
+  ```
+
+  Create a symbolic links to enable nginx sites:
+
+  ```bash
+  sudo ln -s /etc/nginx/sites-available/whaticket-frontend /etc/nginx/sites-enabled
+  sudo ln -s /etc/nginx/sites-available/whaticket-backend /etc/nginx/sites-enabled
+  ```
+
+  By default, nginx limit body size to 1MB, which isn't enough for some media uploads. Lets change it to 20MB, adding a new line to config file:
+
+  ```bash
+  sudo nano /etc/nginx/nginx.conf
+  ...
+  http {
+      ...
+      client_max_body_size 20M; # HANDLE BIGGER UPLOADS
+  }
+  ```
+
+  Test nginx configuration and restart server:
+
+  ```bash
+  sudo nginx -t
+  sudo service nginx restart
+  ```
+
+  Now, enable SSL (https) on your sites to use all app features like notifications and sending audio messages. An easy way to this is using Certbot:
+
+  Install certbot:
+
+  ```bash
+  sudo snap install --classic certbot
+  sudo apt update
+  ```
+
+  Enable SSL on nginx (Fill / Accept all information required):
+
+  ```bash
+  sudo certbot --nginx
+  ```
+
+  ### Using docker and docker-compose
+
+  To run WhaTicket using docker you must perform the following steps:
+
+  ```bash
+  cp .env.example .env
+  ```
+
+  Now it will be necessary to configure the .env using its information, the variables are the same as those mentioned in the deployment using ubuntu, with the exception of mysql settings that were not in the .env.
+
+  ```bash
+  # MYSQL
+  MYSQL_ENGINE=                           # default: mariadb
+  MYSQL_VERSION=                          # default: 10.6
+  MYSQL_ROOT_PASSWORD=strongpassword      # change it please
+  MYSQL_DATABASE=whaticket
+  MYSQL_PORT=3306                         # default: 3306; Use this port to expose mysql server
+  TZ=America/Fortaleza                    # default: America/Fortaleza; Timezone for mysql
+
+  # BACKEND
+  BACKEND_PORT=                           # default: 8080; but access by host not use this port
+  BACKEND_SERVER_NAME=api.mydomain.com    # or you can put localhost in here
+  BACKEND_URL=https://api.mydomain.com
+  PROXY_PORT=443
+  JWT_SECRET=3123123213123                # change it please
+  JWT_REFRESH_SECRET=75756756756          # change it please
+
+  # FRONTEND
+  FRONTEND_PORT=80                        # default: 3000; Use port 80 to expose in production
+  FRONTEND_SSL_PORT=443                   # default: 3001; Use port 443 to expose in production
+  FRONTEND_SERVER_NAME=myapp.mydomain.com
+  FRONTEND_URL=https://myapp.mydomain.com
+
+  # BROWSERLESS
+  MAX_CONCURRENT_SESSIONS=                # default: 1; Use only if using browserless
+  ```
+
+  **NOTE**: In some case using older version of node could make trouble on backend, so i suggest u to upgrade the node version in dockerfile backend into version 20, also u might be need to build the package with --legacy-peer-deps
+
+  ```
+  FROM node:20 as build-deps
+
+  RUN apt-get update && apt-get install -y wget
+
+  ENV DOCKERIZE_VERSION v0.6.1
+  RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+      && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+      && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+  RUN apt-get update \
+      && apt-get install -y wget gnupg \
+      && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+      && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+      && apt-get update \
+      && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
+        --no-install-recommends \
+      && rm -rf /var/lib/apt/lists/*
+
+  ADD https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64 /usr/local/bin/dumb-init
+  RUN chmod +x /usr/local/bin/dumb-init
+
+  # ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+
+  WORKDIR /usr/src/app
+  COPY package*.json ./
+  RUN npm install --legacy-peer-deps
+
+  COPY . .
+  RUN npm run build --legacy-peer-deps
+
+  ENV NODE_ENV=production
+  ENV PORT=3000
+  # ENV CHROME_BIN=google-chrome-stable
+
+  EXPOSE 3000
+
+  ENTRYPOINT ["dumb-init", "--"]
+  CMD ["sh", "-c", "dockerize -wait tcp://${DB_HOST}:3306 && npx sequelize db:migrate && node dist/server.js"]
+
+  ```
+
+  **NOTE**: You might be ended error with typescript so i suggest u to turn off the strict mode on tsconfig.json like this:
+
+  ```
+  {
+    "compilerOptions": {
+      "target": "es6",
+      "module": "commonjs",
+      "outDir": "./dist",
+      "strict": false,
+      "strictPropertyInitialization": false,
+      "esModuleInterop": true,
+      "strictNullChecks": false,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true
+    }
+  }
+
+  ```
+
+  After defining the variables, run the following command:
+
+  ```bash
+  docker-compose up -d --build
+  ```
+
+  On the `first` run it will be necessary to seed the database tables using the following command:
+
+  ```bash
+  docker-compose exec backend npx sequelize db:seed:all
+  ```
+
+  #### SSL Certificate
+
+  To deploy the ssl certificate, add it to the `ssl/certs` folder. Inside it there should be a `backend` and a `frontend` folder, and each of them should contain the files `fullchain.pem` and `privkey.pem`, as in the structure below:
+
+  ```bash
+  .
+  ├── certs
+  │   ├── backend
+  │   │   ├── fullchain.pem
+  │   │   └── privkey.pem
+  │   └── frontend
+  │       ├── fullchain.pem
+  │       └── privkey.pem
+  └── www
+  ```
+
+  To generate the certificate files use `certbot` which can be installed using snap, I used the following command:
+
+  Note: The frontend container that runs nginx is already prepared to receive the request made by certboot to validate the certificate.
+
+  ```bash
+  # BACKEND
+  certbot certonly --cert-name backend --webroot --webroot-path ./ssl/www/ -d api.mydomain.com
+
+  # FRONTEND
+  certbot certonly --cert-name frontend --webroot --webroot-path ./ssl/www/ -d myapp.mydomain.com
+  ```
+
+  ## Access Data
+
+  User: admin@whaticket.com
+  Password: admin
+
+## Reset Database
+
+### Using Docker
+
+```
+echo "Resetting database..."
+docker-compose exec backend npx sequelize db:seed:undo:all
+docker-compose exec backend npx sequelize db:migrate:undo:all
+docker-compose exec backend npx sequelize db:drop
+docker-compose exec backend npx sequelize db:create
+docker-compose exec backend npx sequelize db:migrate
+docker-compose exec backend npx sequelize db:seed:all
+echo "Database reset complete!"
 ```
 
-Now we can login with this new user:
+### Without Docker
 
-```bash
-su deploy
+open the backend directory, and run these following code :
+
 ```
-
-You'll need two subdomains forwarding to yours VPS ip to follow these instructions. We'll use `myapp.mydomain.com` to frontend and `api.mydomain.com` to backend in the following example.
-
-Update all system packages:
-
-```bash
-sudo apt update && sudo apt upgrade
-```
-
-Install node, and confirm node command is available:
-
-```bash
-curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-sudo apt-get install -y nodejs
-node -v
-npm -v
-```
-
-Install docker and add you user to docker group:
-
-```bash
-sudo apt install apt-transport-https ca-certificates curl software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
-sudo apt update
-sudo apt install docker-ce
-sudo systemctl status docker
-sudo usermod -aG docker ${USER}
-su - ${USER}
-```
-
-Create Mysql Database using docker:
-_Note_: change MYSQL_DATABASE, MYSQL_PASSWORD, MYSQL_USER and MYSQL_ROOT_PASSWORD.
-
-```bash
-docker run --name whaticketdb -e MYSQL_ROOT_PASSWORD=strongpassword -e MYSQL_DATABASE=whaticket -e MYSQL_USER=whaticket -e MYSQL_PASSWORD=whaticket --restart always -p 3306:3306 -d mariadb:latest --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
-
-# Or run using `docker-compose` as below
-# Before copy .env.example to .env first and set the variables in the file.
-docker-compose up -d mysql
-
-# To administer this mysql database easily using phpmyadmin. 
-# It will run by default on port 9000, but can be changed in .env using `PMA_PORT`
-docker-compose -f docker-compose.phpmyadmin.yaml up -d
-```
-
-Clone this repository:
-
-```bash
-cd ~
-git clone https://github.com/canove/whaticket whaticket
-```
-
-Create backend .env file and fill with details:
-
-```bash
-cp whaticket/backend/.env.example whaticket/backend/.env
-nano whaticket/backend/.env
-```
-
-```bash
-NODE_ENV=
-BACKEND_URL=https://api.mydomain.com      #USE HTTPS HERE, WE WILL ADD SSL LATTER
-FRONTEND_URL=https://myapp.mydomain.com   #USE HTTPS HERE, WE WILL ADD SSL LATTER, CORS RELATED!
-PROXY_PORT=443                            #USE NGINX REVERSE PROXY PORT HERE, WE WILL CONFIGURE IT LATTER
-PORT=8080
-
-DB_HOST=localhost
-DB_DIALECT=
-DB_USER=
-DB_PASS=
-DB_NAME=
-
-JWT_SECRET=3123123213123
-JWT_REFRESH_SECRET=75756756756
-```
-
-Install puppeteer dependencies:
-
-```bash
-sudo apt-get install -y libxshmfence-dev libgbm-dev wget unzip fontconfig locales gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils
-```
-
-Install backend dependencies, build app, run migrations and seeds:
-
-```bash
-cd whaticket/backend
-npm install
-npm run build
+echo "Resetting database..."
+npx sequelize db:seed:undo:all
+npx sequelize db:migrate:undo:all
+npx sequelize db:drop
+npx sequelize db:create
 npx sequelize db:migrate
 npx sequelize db:seed:all
+echo "Database reset complete!"
 ```
 
-Start it with `npm start`, you should see: `Server started on port...` on console. Hit `CTRL + C` to exit.
-
-Install pm2 **with sudo**, and start backend with it:
+You can make it as a script, copy the code and paste onto the file and then Make it executable and run it:
 
 ```bash
-sudo npm install -g pm2
-pm2 start dist/server.js --name whaticket-backend
-```
-
-Make pm2 auto start after reboot:
-
-```bash
-pm2 startup ubuntu -u `YOUR_USERNAME`
-```
-
-Copy the last line outputed from previus command and run it, its something like:
-
-```bash
-sudo env PATH=\$PATH:/usr/bin pm2 startup ubuntu -u YOUR_USERNAME --hp /home/YOUR_USERNAM
-```
-
-Go to frontend folder and install dependencies:
-
-```bash
-cd ../frontend
-npm install
-```
-
-Create frontend .env file and fill it ONLY with your backend address, it should look like this:
-
-```bash
-REACT_APP_BACKEND_URL = https://api.mydomain.com/
-```
-
-Build frontend app:
-
-```bash
-npm run build
-```
-
-Start frontend with pm2, and save pm2 process list to start automatically after reboot:
-
-```bash
-pm2 start server.js --name whaticket-frontend
-pm2 save
-```
-
-To check if it's running, run `pm2 list`, it should look like:
-
-```bash
-deploy@ubuntu-whats:~$ pm2 list
-┌─────┬─────────────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
-│ id  │ name                    │ namespace   │ version │ mode    │ pid      │ uptime │ .    │ status    │ cpu      │ mem      │ user     │ watching │
-├─────┼─────────────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
-│ 1   │ whaticket-frontend      │ default     │ 0.1.0   │ fork    │ 179249   │ 12D    │ 0    │ online    │ 0.3%     │ 50.2mb   │ deploy   │ disabled │
-│ 6   │ whaticket-backend       │ default     │ 1.0.0   │ fork    │ 179253   │ 12D    │ 15   │ online    │ 0.3%     │ 118.5mb  │ deploy   │ disabled │
-└─────┴─────────────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
-
-```
-
-Install nginx:
-
-```bash
-sudo apt install nginx
-```
-
-Remove nginx default site:
-
-```bash
-sudo rm /etc/nginx/sites-enabled/default
-```
-
-Create a new nginx site to frontend app:
-
-```bash
-sudo nano /etc/nginx/sites-available/whaticket-frontend
-```
-
-Edit and fill it with this information, changing `server_name` to yours equivalent to `myapp.mydomain.com`:
-
-```bash
-server {
-  server_name myapp.mydomain.com;
-
-  location / {
-    proxy_pass http://127.0.0.1:3333;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection 'upgrade';
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_cache_bypass $http_upgrade;
-  }
-}
-```
-
-Create another one to backend api, changing `server_name` to yours equivalent to `api.mydomain.com`, and `proxy_pass` to your localhost backend node server URL:
-
-```bash
-sudo cp /etc/nginx/sites-available/whaticket-frontend /etc/nginx/sites-available/whaticket-backend
-sudo nano /etc/nginx/sites-available/whaticket-backend
+nano ResetDatabase
 ```
 
 ```bash
-server {
-  server_name api.mydomain.com;
-
-  location / {
-    proxy_pass http://127.0.0.1:8080;
-    ......
-}
+#!/bin/bash
+ rest code ...
 ```
-
-Create a symbolic links to enable nginx sites:
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/whaticket-frontend /etc/nginx/sites-enabled
-sudo ln -s /etc/nginx/sites-available/whaticket-backend /etc/nginx/sites-enabled
+chmod +x ResetDatabase
+./updateWhaticket
 ```
-
-By default, nginx limit body size to 1MB, which isn't enough for some media uploads. Lets change it to 20MB, adding a new line to config file:
-
-```bash
-sudo nano /etc/nginx/nginx.conf
-...
-http {
-    ...
-    client_max_body_size 20M; # HANDLE BIGGER UPLOADS
-}
-```
-
-Test nginx configuration and restart server:
-
-```bash
-sudo nginx -t
-sudo service nginx restart
-```
-
-Now, enable SSL (https) on your sites to use all app features like notifications and sending audio messages. An easy way to this is using Certbot:
-
-Install certbot:
-
-```bash
-sudo snap install --classic certbot
-sudo apt update
-```
-
-Enable SSL on nginx (Fill / Accept all information required):
-
-```bash
-sudo certbot --nginx
-```
-
-### Using docker and docker-compose
-
-To run WhaTicket using docker you must perform the following steps:
-
-```bash
-cp .env.example .env
-```
-
-Now it will be necessary to configure the .env using its information, the variables are the same as those mentioned in the deployment using ubuntu, with the exception of mysql settings that were not in the .env. 
-
-```bash
-# MYSQL
-MYSQL_ENGINE=                           # default: mariadb
-MYSQL_VERSION=                          # default: 10.6
-MYSQL_ROOT_PASSWORD=strongpassword      # change it please
-MYSQL_DATABASE=whaticket
-MYSQL_PORT=3306                         # default: 3306; Use this port to expose mysql server
-TZ=America/Fortaleza                    # default: America/Fortaleza; Timezone for mysql
-
-# BACKEND
-BACKEND_PORT=                           # default: 8080; but access by host not use this port
-BACKEND_SERVER_NAME=api.mydomain.com
-BACKEND_URL=https://api.mydomain.com
-PROXY_PORT=443
-JWT_SECRET=3123123213123                # change it please
-JWT_REFRESH_SECRET=75756756756          # change it please
-
-# FRONTEND
-FRONTEND_PORT=80                        # default: 3000; Use port 80 to expose in production
-FRONTEND_SSL_PORT=443                   # default: 3001; Use port 443 to expose in production
-FRONTEND_SERVER_NAME=myapp.mydomain.com
-FRONTEND_URL=https://myapp.mydomain.com
-
-# BROWSERLESS
-MAX_CONCURRENT_SESSIONS=                # default: 1; Use only if using browserless
-```
-
-After defining the variables, run the following command:
-
-```bash
-docker-compose up -d --build
-```
-
-On the `first` run it will be necessary to seed the database tables using the following command:
-
-```bash
-docker-compose exec backend npx sequelize db:seed:all
-```
-
-#### SSL Certificate
-
-To deploy the ssl certificate, add it to the `ssl/certs` folder. Inside it there should be a `backend` and a `frontend` folder, and each of them should contain the files `fullchain.pem` and `privkey.pem`, as in the structure below:
-
-```bash
-.
-├── certs
-│   ├── backend
-│   │   ├── fullchain.pem
-│   │   └── privkey.pem
-│   └── frontend
-│       ├── fullchain.pem
-│       └── privkey.pem
-└── www
-```
-
-To generate the certificate files use `certbot` which can be installed using snap, I used the following command:
-
-Note: The frontend container that runs nginx is already prepared to receive the request made by certboot to validate the certificate.
-
-```bash
-# BACKEND
-certbot certonly --cert-name backend --webroot --webroot-path ./ssl/www/ -d api.mydomain.com
-
-# FRONTEND
-certbot certonly --cert-name frontend --webroot --webroot-path ./ssl/www/ -d myapp.mydomain.com
-```
-
-## Access Data
-
-User: admin@whaticket.com
-Password: admin
 
 ## Upgrading
 

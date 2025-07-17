@@ -1,4 +1,4 @@
-FROM node:14 as build-deps
+FROM node:20 as build-deps
 
 RUN apt-get update && apt-get install -y wget
 
@@ -19,22 +19,20 @@ RUN apt-get update \
 ADD https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64 /usr/local/bin/dumb-init
 RUN chmod +x /usr/local/bin/dumb-init
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+# ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
 WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 COPY . .
-RUN npm run build
+RUN npm run build --legacy-peer-deps
 
 ENV NODE_ENV=production
 ENV PORT=3000
-ENV CHROME_BIN=google-chrome-stable
+# ENV CHROME_BIN=google-chrome-stable
 
 EXPOSE 3000
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD dockerize -wait tcp://${DB_HOST}:3306 \
-  && npx sequelize db:migrate \
-  && node dist/server.js
+CMD ["sh", "-c", "dockerize -wait tcp://${DB_HOST}:3306 && npx sequelize db:migrate && node dist/server.js"]
