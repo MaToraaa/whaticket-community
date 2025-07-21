@@ -1,5 +1,3 @@
-version: '3'
-
 networks:
   whaticket:
 
@@ -12,7 +10,7 @@ services:
     environment:
       - DB_HOST=mysql
       - DB_USER=root
-      - DB_PASS=${MYSQL_ROOT_PASSWORD:-strongpassword}
+      - DB_PASS=${MYSQL_ROOT_PASSWORD:-whaticket}
       - DB_NAME=${MYSQL_DATABASE:-whaticket}
       - JWT_SECRET=${JWT_SECRET:-3123123213123}
       - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-75756756756}

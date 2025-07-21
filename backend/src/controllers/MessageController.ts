@@ -6,7 +6,7 @@ import Message from "../models/Message";
 
 import ListMessagesService from "../services/MessageServices/ListMessagesService";
 import ShowTicketService from "../services/TicketServices/ShowTicketService";
-import DeleteWhatsAppMessage from "../services/WbotServices/DeleteWhatsAppMessage";
+import { DeleteMessagesByTimeRange, DeleteWhatsAppMessage } from "../services/WbotServices/DeleteWhatsAppMessage";
 import SendWhatsAppMedia from "../services/WbotServices/SendWhatsAppMedia";
 import SendWhatsAppMessage from "../services/WbotServices/SendWhatsAppMessage";
 
@@ -72,4 +72,42 @@ export const remove = async (
   });
 
   return res.send();
+};
+
+type ParamRemoveTimeRange = {
+  from: string;
+  to: string;
+};
+
+export const removeTimeRange = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { from, to } = req.query as unknown as ParamRemoveTimeRange;
+
+  if (!from || !to) {
+    return res.status(400).json({ error: "from and to query params are required" });
+  }
+
+  const fromDate = new Date(from);
+  console.log("🚀 ~ fromDate:", fromDate)
+  const toDate = new Date(to);
+  console.log("🚀 ~ toDate:", toDate)
+
+  if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+    return res.status(400).json({ error: "Invalid date format" });
+  }
+
+  const messages = await DeleteMessagesByTimeRange(fromDate, toDate);
+
+  const io = getIO();
+  io.emit("appMessage", {
+    action: "update",
+    messages
+  });
+
+  return res.json({
+    message: `${messages.length} messages deleted.`,
+    data: messages
+  });
 };
